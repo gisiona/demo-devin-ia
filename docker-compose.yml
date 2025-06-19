@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: financial-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: financial_control
+      MYSQL_USER: financial_user
+      MYSQL_PASSWORD: financial_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - financial-network
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=financial_control
+      - DB_USER=financial_user
+      - DB_PASSWORD=financial_password
+    depends_on:
+      - mysql
+    networks:
+      - financial-network
+
+  transaction-service:
+    build:
+      context: ./transaction-service
+      dockerfile: Dockerfile
+    container_name: transaction-service
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=financial_control
+      - DB_USER=financial_user
+      - DB_PASSWORD=financial_password
+    depends_on:
+      - mysql
+    networks:
+      - financial-network
+
+  investment-service:
+    build:
+      context: ./investment-service
+      dockerfile: Dockerfile
+    container_name: investment-service
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=financial_control
+      - DB_USER=financial_user
+      - DB_PASSWORD=financial_password
+    depends_on:
+      - mysql
+    networks:
+      - financial-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - USER_SERVICE_URL=http://user-service:8080
+      - TRANSACTION_SERVICE_URL=http://transaction-service:8080
+      - INVESTMENT_SERVICE_URL=http://investment-service:8080
+    depends_on:
+      - user-service
+      - transaction-service
+      - investment-service
+    networks:
+      - financial-network
+
+volumes:
+  mysql_data:
+
+networks:
+  financial-network:
+    driver: bridge
