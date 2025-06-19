@@ -2,7 +2,7 @@
   "dashboard": {
     "id": null,
     "title": "Financial Services Monitoring",
-    "tags": ["financial", "microservices"],
+    "tags": ["financial", "microservices", "performance"],
     "timezone": "browser",
     "panels": [
       {
@@ -15,7 +15,7 @@
             "legendFormat": "{{user}}"
           }
         ],
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+        "gridPos": {"h": 6, "w": 8, "x": 0, "y": 0}
       },
       {
         "id": 2,
@@ -27,7 +27,7 @@
             "legendFormat": "95th percentile - {{user}}"
           }
         ],
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+        "gridPos": {"h": 6, "w": 8, "x": 8, "y": 0}
       },
       {
         "id": 3,
@@ -39,7 +39,79 @@
             "legendFormat": "{{job}}"
           }
         ],
-        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+        "gridPos": {"h": 6, "w": 8, "x": 16, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "k6 Load Test - Virtual Users",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "k6_vus",
+            "legendFormat": "Active VUs"
+          },
+          {
+            "expr": "k6_vus_max",
+            "legendFormat": "Max VUs"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6}
+      },
+      {
+        "id": 5,
+        "title": "k6 Load Test - Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(k6_http_reqs_total[1m])",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6}
+      },
+      {
+        "id": 6,
+        "title": "k6 Load Test - Response Time Percentiles",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(k6_http_req_duration_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.90, rate(k6_http_req_duration_bucket[5m]))",
+            "legendFormat": "90th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(k6_http_req_duration_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14}
+      },
+      {
+        "id": 7,
+        "title": "k6 Load Test - Error Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(k6_http_req_failed_total[5m]) * 100",
+            "legendFormat": "Error Rate %"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 5},
+                {"color": "red", "value": 10}
+              ]
+            }
+          }
+        }
       }
     ],
     "time": {"from": "now-1h", "to": "now"},
