@@ -5,6 +5,7 @@ import com.gisiona.demodevinia.domain.model.User;
 import com.gisiona.demodevinia.domain.port.UserService;
 import com.gisiona.demodevinia.infrastructure.adapter.web.dto.CreateUserRequest;
 import com.gisiona.demodevinia.infrastructure.adapter.web.dto.UpdateUserRequest;
+import com.gisiona.demodevinia.infrastructure.ratelimit.RateLimitInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,6 +32,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private RateLimitInterceptor rateLimitInterceptor;
 
     @Autowired
     private ObjectMapper objectMapper;

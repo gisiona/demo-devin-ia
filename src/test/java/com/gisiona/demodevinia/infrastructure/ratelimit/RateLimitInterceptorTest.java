@@ -63,7 +63,8 @@ class RateLimitInterceptorTest {
 
         assertFalse(result);
         verify(response).setStatus(429);
-        verify(response).setContentType("application/json");
+        verify(response).setContentType("application/json; charset=UTF-8");
+        verify(response).setCharacterEncoding("UTF-8");
         
         String responseBody = stringWriter.toString();
         assertTrue(responseBody.contains("Muitas requisições"));

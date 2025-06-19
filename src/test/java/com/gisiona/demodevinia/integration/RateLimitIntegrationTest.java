@@ -35,18 +35,18 @@ class RateLimitIntegrationTest {
 
     @Test
     void shouldApplyRateLimitToCreateUserEndpoint() throws Exception {
-        CreateUserRequest request = new CreateUserRequest("João Silva", "joao@example.com");
-
         for (int i = 0; i < 3; i++) {
+            CreateUserRequest request = new CreateUserRequest("João Silva " + i, "joao" + i + "@example.com");
             mockMvc.perform(post("/api/users")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated());
         }
 
+        CreateUserRequest finalRequest = new CreateUserRequest("João Silva Final", "joao.final@example.com");
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(objectMapper.writeValueAsString(finalRequest)))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.status").value(429))
                 .andExpect(jsonPath("$.message").value("Muitas requisições. Tente novamente mais tarde."))

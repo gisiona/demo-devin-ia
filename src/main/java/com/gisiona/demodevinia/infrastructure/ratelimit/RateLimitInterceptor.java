@@ -37,7 +37,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
                 clientIp, request.getMethod(), request.getRequestURI());
             
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.setContentType("application/json");
+            response.setContentType("application/json; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
             response.getWriter().write(String.format(
                 "{\"status\":%d,\"message\":\"%s\",\"timestamp\":\"%s\"}",
                 HttpStatus.TOO_MANY_REQUESTS.value(),
