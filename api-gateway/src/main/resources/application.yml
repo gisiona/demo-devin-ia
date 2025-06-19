@@ -23,11 +23,11 @@ logging:
 
 services:
   user-service:
-    url: ${USER_SERVICE_URL:http://localhost:8081}
+    url: ${USER_SERVICE_URL:http://user-service:8081}
   transaction-service:
-    url: ${TRANSACTION_SERVICE_URL:http://localhost:8082}
+    url: ${TRANSACTION_SERVICE_URL:http://transaction-service:8082}
   investment-service:
-    url: ${INVESTMENT_SERVICE_URL:http://localhost:8083}
+    url: ${INVESTMENT_SERVICE_URL:http://investment-service:8083}
 
 ---
 spring:
