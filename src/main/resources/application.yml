@@ -29,3 +29,15 @@ logging:
   level:
     com.gisiona.demodevinia: DEBUG
     org.springframework.web: DEBUG
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+rate-limit:
+  requests-per-hour: 100
+  requests-per-minute: 20
+  cache-size: 100000
+  cache-expire-minutes: 10
