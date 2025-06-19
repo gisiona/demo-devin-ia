@@ -29,9 +29,13 @@ class UserController(
             ApiResponse(responseCode = "409", description = "Email ou CPF já existem")
         ]
     )
-    fun registerUser(@Valid @RequestBody request: CreateUserRequest): ResponseEntity<UserResponse> {
-        val user = userService.createUser(request)
-        return ResponseEntity.status(HttpStatus.CREATED).body(user)
+    fun registerUser(@Valid @RequestBody request: CreateUserRequest): ResponseEntity<Any> {
+        return try {
+            val user = userService.createUser(request)
+            ResponseEntity.status(HttpStatus.CREATED).body(user)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("error" to e.message))
+        }
     }
 
     @PostMapping("/login")
@@ -42,9 +46,13 @@ class UserController(
             ApiResponse(responseCode = "401", description = "Credenciais inválidas")
         ]
     )
-    fun loginUser(@Valid @RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
-        val loginResponse = userService.authenticateUser(request)
-        return ResponseEntity.ok(loginResponse)
+    fun loginUser(@Valid @RequestBody request: LoginRequest): ResponseEntity<Any> {
+        return try {
+            val loginResponse = userService.authenticateUser(request)
+            ResponseEntity.ok(loginResponse)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to e.message))
+        }
     }
 
     @GetMapping("/profile")
